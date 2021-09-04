@@ -18,7 +18,7 @@ const StyledFile=styled.div `
 const File =({name})=>(
         <StyledFile>
             <AiOutlineFile/>
-            <span>{name}</span>
+            <span style={{ textTransform:'lowercase'}}>{name}</span>
         </StyledFile>
     )
 

@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import Tree from '../Tree/Tree'
+import axios from 'axios'
 
 const structure= [
     {
@@ -119,12 +120,29 @@ text-overflow: ellipsis;
 `
 
 
-const Content = () => {
+class Content extends React.Component {
+  state = {
+    products:[]
+  }
+
+  componentDidMount() {
+    axios.get('http://127.0.0.1:8000/api/')
+    .then(res=>{
+      this.setState({
+        products:res.data
+      });
+      console.log(res.data)
+    })
+  }
+  render(){
     return (
-        <Container>
-            <Tree data={structure}/>
-        </Container>
-    )
+      <Container>
+          <Tree data={this.state.products}/>
+      </Container>
+  )
+
+  }
+   
 }
 
 export default Content

@@ -2,7 +2,7 @@ import React from 'react'
 import { Folder } from './Folder';
 import { File } from './File';
 
-const TreeRecursive = ({ data }) => {
+/*const TreeRecursive = ({ data }) => {
     // loop through the data
     return data.map(item => {
       // if its a file render <File />
@@ -13,12 +13,32 @@ const TreeRecursive = ({ data }) => {
       if (item.type === 'folder') {
         return (
           <Folder name={item.name}>
-            {/* Call the <TreeRecursive /> component with the current item.childrens */}
+            
             <TreeRecursive data={item.childrens} />
           </Folder>
         );
       }
     });
   };
+*/
+const TreeRecursive = ({ data }) => {
+    // loop through the data
+    return(
+    <Folder name ='Biopharm'>
+      {
+          data.map(item => {
+          // if its a file render <File />
+          if (1 === 1) {
+            return <File name={item.designation} />;
+             }
+  // if its a folder render <Folder />
+      })
+      }
+    </Folder>
+    )
+   
+  };
+
+ 
 
   export {TreeRecursive};
