@@ -17,8 +17,8 @@ class ProductDetailView(RetrieveAPIView):
 #sales actual of a Product with id pk
 @api_view(['GET'])
 def ProductActualSales(request,pk):
-        sales = ActualSales.objects.get(product=pk)
-        serializer = SalesActualSerializer(sales)
+        sales = ActualSales.objects.filter(product=pk)
+        serializer = SalesActualSerializer(sales,many=True)
         return Response(serializer.data)
 #def setUpTestData(self):
  #       Product.objects.create(dci='asperine')

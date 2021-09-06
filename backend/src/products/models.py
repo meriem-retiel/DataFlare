@@ -13,7 +13,7 @@ class Date(models.Model):
     id_date = models.BigAutoField(primary_key=True)
     date = models.DateField(default=None)
     def __str__(self):
-        return self.date
+        return ' %s' % (self.date)
     #date = models.DateField(default=None,input_formats=settings.DATE_INPUT_FORMATS)
 #instance of date : datetime.date(1997, 10, 19) 
 
