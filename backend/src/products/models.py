@@ -34,7 +34,7 @@ class ActualSales(models.Model):
         return ' %s %s' % (self.product , self.quantity)
 
 class AdjustedSales(models.Model):
-    #id_adjust = models.BigAutoField(primary_key=True)
+    id_adjust = models.BigAutoField(primary_key=True)
     quantity = models.IntegerField(default=0)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     date = models.ForeignKey(Date, on_delete=models.CASCADE)

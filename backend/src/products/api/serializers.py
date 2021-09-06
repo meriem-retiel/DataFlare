@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import ForecastedSales, Product, ActualSales, Date 
+from ..models import AdjustedSales, ForecastedSales, Product, ActualSales, Date 
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,6 +15,12 @@ class SalesForecastedSerializer(serializers.ModelSerializer):
     class Meta:
         model= ForecastedSales 
         fields = ('quantity','product','date')
+
+class SalesAdjustedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= AdjustedSales 
+        fields = ('quantity','product','date')
+
 
 class DateSerializer(serializers.ModelSerializer):
     class Meta:

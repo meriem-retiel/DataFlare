@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-from ..models import ForecastedSales, Product, ActualSales
-from .serializers import ProductSerializer, ProductTableSerializer, SalesActualSerializer, SalesForecastedSerializer
+from ..models import AdjustedSales, ForecastedSales, Product, ActualSales
+from .serializers import ProductSerializer, ProductTableSerializer, SalesActualSerializer, SalesForecastedSerializer,SalesAdjustedSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
@@ -21,25 +21,24 @@ def ProductActualSales(request,pk):
         serializer = SalesActualSerializer(sales,many=True)
         return Response(serializer.data)
 
-#sales actual of a Product with id pk
+#sales forcasted of a Product with id pk
 @api_view(['GET'])
 def ProductForecastedSales(request,pk):
         sales = ForecastedSales.objects.filter(product=pk)
         serializer = SalesForecastedSerializer(sales,many=True)
         return Response(serializer.data)
 
-#all sales pf a product in a nested serilized reponses
+
+#sales adjusted of a Product with id pk
+@api_view(['GET'])
+def ProductAdjustedSales(request,pk):
+        sales = AdjustedSales.objects.filter(product=pk)
+        serializer = SalesAdjustedSerializer(sales,many=True)
+        return Response(serializer.data)
+
+#Get all sales in one api call
 from collections import namedtuple
 ProductTable = namedtuple('ProductTable', ('Actuals', 'Forecasted'))
-
-def Actuals(pk):
-        sales = ActualSales.objects.filter(product=pk)
-        serializer = SalesActualSerializer(sales,many=True)
-        return serializer.data
-def Forcasted(pk):
-        sales = ForecastedSales.objects.filter(product=pk)
-        serializer = SalesForecastedSerializer(sales,many=True)
-        return serializer.data
 
 @api_view(['GET'])
 def ProductTable(request,pk):
