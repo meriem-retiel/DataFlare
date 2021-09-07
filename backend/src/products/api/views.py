@@ -4,6 +4,7 @@ from ..models import AdjustedSales, ForecastedSales, Product, ActualSales
 from .serializers import ProductSerializer, ProductTableSerializer, SalesActualSerializer, SalesForecastedSerializer,SalesAdjustedSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework import status
 
 # Create your views here.
 class ProductListView(ListAPIView):
@@ -15,18 +16,19 @@ class ProductDetailView(RetrieveAPIView):
     serializer_class= ProductSerializer
 
 #sales actual of a Product with id pk
-@api_view(['GET'])
+@api_view(['GET','Post'])
 def ProductActualSales(request,pk):
-        sales = ActualSales.objects.filter(product=pk)
-        serializer = SalesActualSerializer(sales,many=True)
-        return Response(serializer.data)
+    if request.method == 'Get':
+            sales = ActualSales.objects.filter(product=pk)
+            serializer = SalesActualSerializer(sales,many=True)
+            return Response(serializer.data)
+    elif request.method == 'Post':
+        serializer = SalesActualSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-#sales forcasted of a Product with id pk
-@api_view(['GET'])
-def ProductForecastedSales(request,pk):
-        sales = ForecastedSales.objects.filter(product=pk)
-        serializer = SalesForecastedSerializer(sales,many=True)
-        return Response(serializer.data)
 
 
 #sales adjusted of a Product with id pk
@@ -63,5 +65,33 @@ def ProductTable(request,pk):
   #      prod = Product.objects.get(id=1)
    #     expected_object_name = f'{prod.dci}'
     #    self.assertEqual(expected_object_name, 'first dci')
+##########################
+#sales forcasted of a Product with id pk
+@api_view(['GET'])
+#add later Model names so need specify model_name to get its prediction
+def ProductForecastedSales(request,pk):
+        sales = ForecastedSales.objects.filter(product=pk)
+        serializer = SalesForecastedSerializer(sales,many=True)
+        return Response(serializer.data)
 
-        
+
+#when user adjust in table
+@api_view(["GET"])
+def AddAdjustedSales(request):
+#Create a sales instance from POST data 
+        a = AdjustedSales(request.Post)
+#save it in model
+        a.save()
+
+#when user import data
+@api_view(["GET"])
+def AddActualSales(request):
+#Create a sales instance from POST data 
+        a = ActualSales(request.Post)
+#save it in model
+        a.save()
+#this function shouldnt run with request but auto
+def ProductPrediction():  
+          #all product
+          
+            return()            
