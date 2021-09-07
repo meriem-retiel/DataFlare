@@ -3,6 +3,7 @@ import Dashboard from "./containers/Dashboard";
 import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./styles/global";
 import { lightTheme, darkTheme } from "./styles/theme";
+import { BarChart } from "./components/Chart/Chart";
 
 
 const structure= [
