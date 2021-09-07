@@ -4,6 +4,7 @@ from ..models import AdjustedSales, ForecastedSales, Product, ActualSales
 from .serializers import ProductSerializer, ProductTableSerializer, SalesActualSerializer, SalesForecastedSerializer,SalesAdjustedSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+import datetime
 
 # Create your views here.
 class ProductListView(ListAPIView):
@@ -11,13 +12,14 @@ class ProductListView(ListAPIView):
     serializer_class= ProductSerializer
 
 class ProductDetailView(RetrieveAPIView):
-    queryset= Product.objects.all()
+    queryset= ActualSales.objects.all()
     serializer_class= ProductSerializer
+
 
 #sales actual of a Product with id pk
 @api_view(['GET'])
 def ProductActualSales(request,pk):
-        sales = ActualSales.objects.filter(product=pk)
+        sales = ActualSales.objects.filter(product=pk,date=datetime.date(2019, 1, 1))
         serializer = SalesActualSerializer(sales,many=True)
         return Response(serializer.data)
 

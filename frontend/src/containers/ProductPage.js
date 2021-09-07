@@ -1,3 +1,5 @@
+import { RecentActors } from '@material-ui/icons'
+import axios from 'axios'
 import React from 'react'
 import styled from 'styled-components'
 import { BarChart } from '../components/Chart/Chart'
@@ -191,13 +193,64 @@ color: ${({theme})=> theme.textColor };
 
 `
 
-const ProductPage = () => {
-    return (
-        <Container>
-           <Table data={structure}/>
-           <BarChart data ={chartData}/>
-        </Container>
-    )
+class ProductPage extends React.Component {
+    state={
+        actualSales:[],
+        forcastedSales:[],
+        ajustedSales:[],
+    }
+    componentDidMount() {
+        axios.get('http://127.0.0.1:8000/api/salesActual/1/')
+        .then(res=>{
+          this.setState({
+            actualSales:res.data
+          });
+        })
+        axios.get('http://127.0.0.1:8000/api/salesForecasted/1/')
+        .then(res=>{
+          this.setState({
+            forcastedSales:res.data
+          });
+        })
+        axios.get('http://127.0.0.1:8000/api/salesAdjusted/1/')
+        .then(res=>{
+          this.setState({
+            ajustedSales:res.data
+          });
+        })
+      }
+    render(){
+        const chartData = {
+            labels: this.state.actualSales.map((item) => item.date),
+            datasets: [{
+            label: "Ventes actuels",
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: this.state.actualSales.map((item) => item.quantity),
+            fill: false, 
+            },
+            {
+                label: "Prévision",
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 30, 132)',
+                data: structure.map((item) => item.ForcastedSale),
+                fill: false,}
+        
+                
+        
+          
+        ],
+        }
+        
+        return (
+            <Container>
+               <Table data={this.state}/>
+               <BarChart data ={chartData}/>
+            </Container>
+        )
+
+    }
+   
 }
 
 export default ProductPage
