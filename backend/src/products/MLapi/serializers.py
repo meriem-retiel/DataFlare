@@ -1,0 +1,1 @@
+#use api models srilizers and create normal serilizer to return predictions json

@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import ProductDetailView,ProductListView,ProductActualSales,ProductAdjustedSales,ProductForecastedSales,ProductTable
+from .views import ProductDetailView,CreateActualSales,ProductListView,ProductActualSales,ProductAdjustedSales,ProductForecastedSales,ProductTable
 
 urlpatterns = [
     path('',ProductListView.as_view()),
@@ -7,5 +7,7 @@ urlpatterns = [
     path('salesActual/<str:pk>/',ProductActualSales),
     path('salesForecasted/<str:pk>/',ProductForecastedSales),
     path('salesAdjusted/<str:pk>/',ProductAdjustedSales),
+    path('importsalesActual/',CreateActualSales),
+
     #path('productTable/<str:pk>/',ProductTable),
 ]

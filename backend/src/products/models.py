@@ -13,7 +13,7 @@ class Date(models.Model):
     id_date = models.BigAutoField(primary_key=True)
     date = models.DateField(default=None)
     def __str__(self):
-        return ' %s' % (self.date)
+        return ' %s %s' % (self.id_date, self.date)
     #date = models.DateField(default=None,input_formats=settings.DATE_INPUT_FORMATS)
 #instance of date : datetime.date(1997, 10, 19) 
 
@@ -30,6 +30,7 @@ class ActualSales(models.Model):
     quantity = models.IntegerField(default=0)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     date = models.ForeignKey(Date, on_delete=models.CASCADE)
+    
     def __str__(self):
         return ' %s %s %s' % (self.date, self.product , self.quantity)
 
