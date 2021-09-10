@@ -6,7 +6,7 @@ from ..api.serializers import DateSerializer, ProductSerializer, SalesActualSeri
 #from keras.models import load_model
 from keras.models import load_model
 import joblib
-#from pandas import Series
+from pandas import Series
 import numpy as np
 #from numpy import asarray
 #import pandas as pd
@@ -29,7 +29,7 @@ def PredictionModels(request,pk,model):
             #reshape list 1D to 2D
             sales_2D = np.reshape(sales, (1,4))
             print(sales_2D)#[[ 4545  5000 30000 20000]]
-            #predict Quantity [[ 3072. , 3475.  ,6405. , 6303.]]=>10953
+            #predict Quantity test[[ 3072. , 3475.  ,6405. , 6303.]]=>10953
             unistep = RF.predict(sales_2D)
             #######save prediction in forecastSales
             #1--get product instance & serialize
@@ -68,9 +68,33 @@ def PredictionModels(request,pk,model):
             print(unistep_prediction)
             return Response(int(unistep_prediction))
         elif model =="LSTM" :
-
-            return Response(int())
-        else:
+            #loading model & scaler!!path to change
+            path = r"C:\Users\Yacine\PFE_dev_project\DataFlare\backend\src\products\MLapi\TrainedModels\LSTM_model.h5" 
+            scaler_path = r"C:\Users\Yacine\PFE_dev_project\DataFlare\backend\src\products\MLapi\TrainedModels\lstm_scaler.pkl" 
+            LSTM = load_model(path)
+            scaler = joblib.load(scaler_path)
+            #extracting last 5 actual sales to predict 6th
+            previous_5_sales= ActualSales.objects.all().order_by('-date__date')[:5].values('quantity','date__date')      
+            # convert quesryset to list
+            list_result = [x.get('quantity') for x in previous_5_sales]#[t-1,t-2,t-3,t-4,t-5]
+            #reverse list 
+            sales = [x for x in reversed(list_result)]#[t-5,t-4,t-3,t-2,t-1]
+            #differencing
+            sales_diff = difference(sales,1)#gives list 0 1717     1 455     225000    3-10000
+            #scaling 
+            sales=np.array(sales_diff).reshape(-1, 4)#FROM LIST TO ARRAY 2D
+            sales_scaled = scaler.transform(sales.reshape(sales.shape[0], sales.shape[1]))
+           #Predicting new value
+            X = sales_scaled[0, 0:-1]
+            X_3D = X.reshape(1, len(X), 1)
+            print(X_3D)#[[[1.23028088e-01][1.63524432e-03][2.36263948e+00]]]
+            pred = LSTM.predict(X_3D, batch_size=1)
+            #inverse scale
+            pred = invert_scale(scaler, X, pred)#-16294.901620864866
+            ## invert differenced(requires previous value only) 
+            pred = pred + list_result[0]#!!!!logic problm
+            return Response(int(pred))
+        else:            
             return Response("No such model")
 import datetime
 import calendar
@@ -81,3 +105,19 @@ def add_months(sourcedate, months):
     month = month % 12 + 1
     day = min(sourcedate.day, calendar.monthrange(year,month)[1])
     return datetime.date(year, month, day)
+
+def difference(sales_data, interval=1):
+    diff = list()
+    for i in range(interval, len(sales_data)):
+        value = sales_data[i] - sales_data[i - interval]
+        diff.append(value)
+    return Series(diff)
+
+# inverse scaling for a forecasted value
+def invert_scale(scaler, X, yhat):
+	new_row = [x for x in X] + [yhat]
+	array = np.array(new_row)
+	array = array.reshape(1, len(array))
+	inverted = scaler.inverse_transform(array)
+	return inverted[0, -1]
+
