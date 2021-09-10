@@ -11,19 +11,19 @@ class ProductSerializer(serializers.ModelSerializer):
 class DateSerializer(serializers.ModelSerializer):
     class Meta:
         model= Date  
-        fields = ('date',)
+        fields = ('id_date','date',)##added id
 
 
 
 
 class SalesForecastedSerializer(serializers.ModelSerializer):
     #date = serializers.DateField(source="date.date", read_only=True)
-    date = DateSerializer()
-    product = ProductSerializer()
+    product = ProductSerializer(source='Product')
+    date = DateSerializer(source='Date')
 
     class Meta:
         model= ForecastedSales 
-        fields = ('product','quantity','date')
+        fields = ('product','date','quantity')
 
 class SalesAdjustedSerializer(serializers.ModelSerializer):
     #date = serializers.DateField(source="date.date", read_only=True)
