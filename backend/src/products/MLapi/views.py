@@ -74,15 +74,16 @@ def PredictionModels(request,pk,model):
             LSTM = load_model(path)
             scaler = joblib.load(scaler_path)
             #extracting last 5 actual sales to predict 6th
-            previous_5_sales= ActualSales.objects.all().order_by('-date__date')[:5].values('quantity','date__date')      
+            previous_6_sales= ActualSales.objects.all().order_by('-date__date')[:6].values('quantity','date__date')      
             # convert quesryset to list
-            list_result = [x.get('quantity') for x in previous_5_sales]#[t-1,t-2,t-3,t-4,t-5]
+            list_result = [x.get('quantity') for x in previous_6_sales]#[t-1,t-2,t-3,t-4,t-5,t-6]
             #reverse list 
-            sales = [x for x in reversed(list_result)]#[t-5,t-4,t-3,t-2,t-1]
+            sales = [x for x in reversed(list_result)]#[t-6,t-5,t-4,t-3,t-2,t-1]
             #differencing
-            sales_diff = difference(sales,1)#gives list 0 1717     1 455     225000    3-10000
+            sales_diff = difference(sales,1)#gives list 
             #scaling 
-            sales=np.array(sales_diff).reshape(-1, 4)#FROM LIST TO ARRAY 2D
+            sales=np.array(sales_diff).reshape(-1, len(sales_diff))#FROM LIST TO ARRAY 2D
+            print(len(sales_diff))
             sales_scaled = scaler.transform(sales.reshape(sales.shape[0], sales.shape[1]))
            #Predicting new value
             X = sales_scaled[0, 0:-1]
@@ -93,6 +94,7 @@ def PredictionModels(request,pk,model):
             pred = invert_scale(scaler, X, pred)#-16294.901620864866
             ## invert differenced(requires previous value only) 
             pred = pred + list_result[0]#!!!!logic problm
+            print(list_result[0])
             return Response(int(pred))
         else:            
             return Response("No such model")
