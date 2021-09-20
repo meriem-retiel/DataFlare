@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import ProductDetailView,CreateActualSales,ProductListView,ProductActualSales,ProductAdjustedSales,ProductForecastedSales,ProductTable
+from .views import ProductDetailView,CreateActualSales,ProductListView,ProductActualSales,ProductAdjustedSales,ProductForecastedSales
 
 urlpatterns = [
     path('',ProductListView.as_view()),

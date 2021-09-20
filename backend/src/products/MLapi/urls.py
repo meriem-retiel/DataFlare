@@ -1,6 +1,8 @@
 from django.urls import path, include
-from .views import PredictionModels
+from .views import Prediction_Visualization, Model_Training
 
 urlpatterns = [
-    path('<pk>/<model>/',PredictionModels),#get request
+    path('<pk>/<model>/<h>/',Prediction_Visualization),#get request
+    path('train/<pk>/<model>/',Model_Training),#get request
+
 ]

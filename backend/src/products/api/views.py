@@ -43,7 +43,7 @@ def CreateActualSales(request):
         prod1= req_data[1]['product']
         product1 = Product.objects.get(id=prod1)
         #needs all 3 as entry
-        print(product1)
+        print(product1) 
         sale1 = ActualSales.objects.create(quantity= quantity1, product= product1 , date= date1)
         #sale1.save()
         #print(ActualSales.objects.all())
@@ -90,48 +90,15 @@ def ProductAdjustedSales(request,pk):
 #Get all sales in one api call
 from collections import namedtuple
 ProductTable = namedtuple('ProductTable', ('Actuals', 'Forecasted'))
-
-@api_view(['GET'])
-def ProductTable(request,pk):
-        sales = ActualSales.objects.filter(product=pk)
-        serializer1 = SalesActualSerializer(sales,many=True)
-        Actual = serializer1.data
-        ###########
-        sales = ForecastedSales.objects.filter(product=pk)
-        serializer2 = SalesForecastedSerializer(sales,many=True)
-        Forcast = serializer2.data 
-        ##########
-        ProductData = ProductTable(
-            #Actuals =SalesActualSerializer.objects.filter(product=pk),
-            Actuals = Actual,
-            Forecasted = Forcast,
-            #Forcasted =SalesForecastedSerializer.objects.filter(product=pk),
-        )
-        #serializer = ProductTableSerializer(ProductData,context={"request": request})
-        #return Response(serializer.data)
-#def setUpTestData(self):
- #       Product.objects.create(dci='asperine')
-  #      prod = Product.objects.get(id=1)
-   #     expected_object_name = f'{prod.dci}'
-    #    self.assertEqual(expected_object_name, 'first dci')
-##########################
-#sales forcasted of a Product with id pk
-@api_view(['GET'])
-#add later Model names so need specify model_name to get its prediction
-def ProductForecastedSales(request,pk):
-        sales = ForecastedSales.objects.filter(product=pk)
-        serializer = SalesForecastedSerializer(sales,many=True)
-        return Response(serializer.data)
-
+#################
 
 #when user adjust in table
-@api_view(["GET"])
+@api_view(["POST"])
 def AddAdjustedSales(request):
 #Create a sales instance from POST data 
         a = AdjustedSales(request.Post)
 #save it in model
         a.save()
-
 #when user import data
 #def AddActualSales(request):
 #Create a sales instance from POST data 

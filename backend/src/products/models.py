@@ -16,31 +16,35 @@ class Date(models.Model):
         return ' %s %s' % (self.id_date, self.date)
     #date = models.DateField(default=None,input_formats=settings.DATE_INPUT_FORMATS)
 #instance of date : datetime.date(1997, 10, 19) 
-
-class ForecastedSales(models.Model):
-    id_forcast = models.BigAutoField(primary_key=True)
-    quantity = models.IntegerField(default=0)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    date = models.ForeignKey(Date, on_delete=models.CASCADE)
-    def __str__(self):
-        return ' %s %s' % (self.product , self.quantity)
-
 class ActualSales(models.Model):
     id_actual = models.BigAutoField(primary_key=True)
     quantity = models.IntegerField(default=0)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    date = models.ForeignKey(Date, on_delete=models.CASCADE)
-    
+    product = models.ForeignKey(Product,related_name='actual', on_delete=models.CASCADE)
+    date = models.ForeignKey(Date,related_name='actualsale', on_delete=models.CASCADE)
+
     def __str__(self):
-        return ' %s %s %s' % (self.date, self.product , self.quantity)
+        return ' %s %s %s' % ( self.product ,self.quantity, self.date.date)
+        
+class ForecastedSales(models.Model):
+    #add related_name here so product knw what to reference as a relation
+    id_forcast = models.BigAutoField(primary_key=True)
+    quantity = models.IntegerField(default=0)
+    product = models.ForeignKey(Product,related_name='forecast', on_delete=models.CASCADE)
+    date = models.ForeignKey(Date,related_name='forecastsale', on_delete=models.CASCADE)
+    model_name =  models.CharField(max_length=50, default="auto")
+
+    def __str__(self):
+        return ' %s %s %s %s' % ( self.product, self.quantity, self.date.date, self.model_name)
+
+
 
 class AdjustedSales(models.Model):
     id_adjust = models.BigAutoField(primary_key=True)
     quantity = models.IntegerField(default=0)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product,related_name='adjusted', on_delete=models.CASCADE)
     date = models.ForeignKey(Date, on_delete=models.CASCADE)
     def __str__(self):
-        return ' %s %s' % (self.product , self.quantity)
+        return ' %s %s' % (self.product , self.quantity,self.date.date)
 
    # def create(self, validated_data):
         """

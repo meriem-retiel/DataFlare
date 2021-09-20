@@ -3,50 +3,46 @@ from rest_framework import serializers
 from ..models import AdjustedSales, ForecastedSales, Product, ActualSales, Date 
 
 class ProductSerializer(serializers.ModelSerializer):
+    actual = serializers.StringRelatedField(many=True)#bring all sales of product
+    forecast = serializers.StringRelatedField(many=True)
+    #adjusted = serializers.StringRelatedField(many=True)
     class Meta:
         model= Product
-        fields = ('dci','dosage','forme','designation')
+        fields = ('dci','dosage','forme','designation','actual','forecast')
+from ..models import Product, ActualSales, Date 
 
 
 class DateSerializer(serializers.ModelSerializer):
+    actualsale= serializers.StringRelatedField(many=True)#bring all sales of date
+    forecastsale = serializers.StringRelatedField(many=True)
     class Meta:
         model= Date  
-        fields = ('id_date','date',)##added id
+        fields = ('id_date','date','actualsale')##added id
 
-
-
-
-class SalesForecastedSerializer(serializers.ModelSerializer):
-    #date = serializers.DateField(source="date.date", read_only=True)
-    product = ProductSerializer(source='Product')
-    date = DateSerializer(source='Date')
-
+class SalesActualSerializer(serializers.ModelSerializer):
+    date = serializers.DateField(source="date.date", read_only=True)
+    #date = DateSerializer()
+    product = ProductSerializer()
     class Meta:
-        model= ForecastedSales 
-        fields = ('product','date','quantity')
+        model= ActualSales 
+        fields = '__all__'
 
 class SalesAdjustedSerializer(serializers.ModelSerializer):
-    #date = serializers.DateField(source="date.date", read_only=True)
-    date = DateSerializer()
-    product = ProductSerializer()
+    date = serializers.DateField(source="date.date", read_only=True)
+    #date = DateSerializer()
+    #product = ProductSerializer()
     class Meta:
         model= AdjustedSales 
         fields = ('product','quantity','date')
 
-class SalesActualSerializer(serializers.ModelSerializer):
-    #date= serializers.StringRelatedField(read_only=True)
-    #date = serializers.DateField(source="date.date", read_only=True)
-    date = DateSerializer()
-    product = ProductSerializer()
+class SalesForecastedSerializer(serializers.ModelSerializer):
+    date = serializers.DateField(source="date.date", read_only=True)
+    #product = ProductSerializer(source='Product')
+    #["{  "product": 1, "quantity": 7121, "date": "2021-02-01","model_name": "RF"  }"..]
     class Meta:
-        model= ActualSales 
-        fields = ('product','quantity','date')
-    #def create(self, validated_data):
-        """
-        Create and return a new `ActualSale` instance, given the validated data.
-        """
-        #create date if not exist
-        #return ActualSales.objects.create(**validated_data)
+        model= ForecastedSales 
+        fields = ('product','quantity','date','model_name')
+
 
 #class ProductTableSerializer(serializers.Serializer):
     #Actuals = SalesActualSerializer(many=True)
