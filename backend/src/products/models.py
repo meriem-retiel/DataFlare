@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 
 # Create your models here.
 class Product(models.Model):
@@ -11,7 +12,7 @@ class Product(models.Model):
 
 class Date(models.Model):
     id_date = models.BigAutoField(primary_key=True)
-    date = models.DateField(default=None)
+    date = models.DateField(unique=True, default=None)
     def __str__(self):
         return ' %s %s' % (self.id_date, self.date)
     #date = models.DateField(default=None,input_formats=settings.DATE_INPUT_FORMATS)
@@ -32,9 +33,11 @@ class ForecastedSales(models.Model):
     product = models.ForeignKey(Product,related_name='forecast', on_delete=models.CASCADE)
     date = models.ForeignKey(Date,related_name='forecastsale', on_delete=models.CASCADE)
     model_name =  models.CharField(max_length=50, default="auto")
-
+    horizon = models.IntegerField(default=None)
+    class Meta:
+        unique_together = ('date', 'horizon')
     def __str__(self):
-        return ' %s %s %s %s' % ( self.product, self.quantity, self.date.date, self.model_name)
+        return ' %s %s %s %s %s' % ( self.product, self.quantity, self.date.date, self.model_name, self.horizon)
 
 
 
