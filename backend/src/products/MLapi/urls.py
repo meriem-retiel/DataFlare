@@ -1,8 +1,9 @@
 from django.urls import path, include
-from .views import Prediction_Visualization, Model_Training
+from .views import Prediction_Visualization,Forecasting, Model_Training
 
 urlpatterns = [
-   # path('<pk>/<model>/<h>/',Prediction_Visualization),#get request
-    path('train/<pk>/<model>/<h>/',Model_Training),#get request
-
+    path('ForecastedSales/<pk>/<model>/<h>/',Prediction_Visualization),
+    #path('Training/<pk>/<model>/<h>/',Model_Training),#Validated
+    path('Predict/<pk>/<model>/<h>',Forecasting),
+    #'Predict/<pk>/<model>/<h>/<date>'
 ]
