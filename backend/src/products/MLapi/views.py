@@ -90,10 +90,9 @@ def Forecasting(request,pk,model,h):
            #loading model & scaler!!path to change
         path = r"C:\Users\Yacine\PFE_dev_project\DataFlare\backend\src\products\MLapi\TrainedModels\LSTM_model.h5" 
         scaler_path = r"C:\Users\Yacine\PFE_dev_project\DataFlare\backend\src\products\MLapi\TrainedModels\lstm_scaler.pkl" 
+        
         scaler = joblib.load(scaler_path)
         trained_model = load_model(path)
-        #bring scaler of latest model
-        scaler=""
         serilized_predictions = LSTM_predictions(product_instance,date_instance,trained_model,scaler,h)
         return Response(serilized_predictions)
     elif model == "auto":
@@ -124,7 +123,7 @@ def Model_Training(request, pk,model,h):
         #save them in forecastsales table
 
         #serialize them to send back
-
+        #serializer of "mape" & "object of predictions"
         return Response(predictions)
     elif  model == 'MLP':
         MLP_trained_model, mape = MLP_Training(pk,h)#instead of pickling
