@@ -20,11 +20,11 @@ color: ${({theme})=> theme.textColor };
 z-index: 1;
 `
 
-const Sidebar = () => {
+const Sidebar = ({data}) => {
     return (
         <Container>
             <Header title={'products'}/>
-            <Content/>
+            <Content data={data}/>
         </Container>
     )
 }

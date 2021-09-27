@@ -5,7 +5,7 @@ from ..models import AdjustedSales, ForecastedSales, Product, ActualSales, Date
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model= Product
-        fields = ('dci','dosage','forme','designation')
+        fields = ('id','dci','dosage','forme','designation')
 
 class SalesActualSerializer(serializers.ModelSerializer):
     #date= serializers.StringRelatedField(read_only=True)

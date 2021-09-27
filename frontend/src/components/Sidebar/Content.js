@@ -137,7 +137,7 @@ class Content extends React.Component {
   render(){
     return (
       <Container>
-          <Tree data={this.state.products}/>
+          <Tree data={this.props.data}/>
       </Container>
   )
 

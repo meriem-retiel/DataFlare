@@ -19,7 +19,9 @@ class ProductDetailView(RetrieveAPIView):
 #sales actual of a Product with id pk
 @api_view(['GET'])
 def ProductActualSales(request,pk):
-        sales = ActualSales.objects.filter(product=pk,date=datetime.date(2019, 1, 1))
+        sales = ActualSales.objects.filter(
+        product=pk#,date__date__range=[datetime.date(yearD, monthD, 1),datetime.date(yearF, monthF, 1)]
+        )
         serializer = SalesActualSerializer(sales,many=True)
         return Response(serializer.data)
 

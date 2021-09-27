@@ -21,15 +21,15 @@ import { File } from './File';
     });
   };
 */
-const TreeRecursive = ({ data }) => {
+const TreeRecursive = (props) => {
     // loop through the data
     return(
     <Folder name ='Biopharm'>
       {
-          data.map(item => {
+          props.data.map(item => {
           // if its a file render <File />
           if (1 === 1) {
-            return <File name={item.designation} />;
+            return <File id={item.id} name={item.designation} />;
              }
   // if its a folder render <Folder />
       })

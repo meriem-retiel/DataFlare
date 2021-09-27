@@ -1,12 +1,12 @@
 import React from 'react';
-import {Route} from 'react-router-dom';
+import {Route,Switch} from 'react-router-dom';
 import Dashboard from './containers/Dashboard'
+import ProductPage from './containers/ProductPage';
 
 const BaseRouter = ()=>(
-    <div>
-        <Route exact path='/' component={Dashboard}/>
-        <Route exact path='/:articleID' component={Dashboard}/>
-    </div>
+    <Switch>
+        <Route  path='/:productID' component={ProductPage}/>
+    </Switch>
 )
 
 export default BaseRouter;

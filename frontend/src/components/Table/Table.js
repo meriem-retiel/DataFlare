@@ -1,8 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
+import axios from 'axios';
+import IconButton from '@material-ui/core/IconButton';
+import ArrowBackIosRoundedIcon from '@material-ui/icons/ArrowBackIosRounded';
+import ArrowForwardIosRoundedIcon from '@material-ui/icons/ArrowForwardIosRounded';
+import ChevronLeftRoundedIcon from '@material-ui/icons/ChevronLeftRounded';
+import { dateRange } from '../../helper';
 
 const Container = styled.div`
-background-color:red;
+
 `;
 const TableStyled = styled.table`
 border-collapse: collapse;
@@ -36,6 +42,11 @@ border-color: ${({theme})=> theme.secondary};;
   text-align: left;
   padding: 8px;
 `;
+const Icon = styled.div`
+display: inline;
+color:${({theme})=> theme.secondary};
+
+`
 
 const TdActual = styled.td`
 color: white;
@@ -55,63 +66,75 @@ const Header = styled.td`
   border-color: ${({theme})=> theme.secondary};;
 
 `;
+const DateFilter = styled.div`
+float: right;
+font-style: normal;
+font-size: 12px;
+`
 
-const Table = ({data}) => {
-    return (
-        <TableStyled>
-             <Th >  </Th>
-            {
-                data.map((item)=>{
-                    return(
-                        <>
-                        <Th >
-                            {item.date}
-
-                        </Th>
-                       
-                       </>
-                    );
-
-                })
-            }
-            <Tr>
-            <Header>Ventes actuels</Header>
-            
-                {
-                    data.map((item)=>{
-                        return(
-                            <TdActual>{item.ActualSale}</TdActual>
-                        );
-                    })
-                }
-       
-            </Tr>
-            <Tr>
-            <Header>Prévision</Header>
-                {
-                    data.map((item)=>{
-                        return(
-                            <Td>{item.ForcastedSale}</Td>
-                        );
-                    })
-                }
-                       
-            </Tr>
-            <Tr>
-            <Header>Ajustements</Header>
-                {
-                    data.map((item)=>{
-                        return(
-                            <Td>{item.AjustementSale}</Td>
-                        );
-                    })
-                }
-                       
-            </Tr>
-
-        </TableStyled>
+class Table extends React.Component{
+  
+    render()
+    {  const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Decembre"];
+        const dates = dateRange(this.props.dateDebut,this.props.dateFin)
         
-    )
+        return (
+
+            <Container>
+
+                  <TableStyled>
+                 <Th >  </Th>
+                {
+                    dates.map((item)=>{
+                        return(
+                            <Th > {item} </Th>
+                        )
+                    })
+                }
+                <Tr>
+                <Header>Ventes actuels</Header>
+                
+                    {
+                         this.props.actualSales.map((item)=>{
+                            return(
+                                <TdActual>{item.quantity}</TdActual>
+                            );
+                        })
+                    }
+           
+                </Tr>
+                <Tr>
+                <Header>Prévision</Header>
+                    {
+                         this.props.actualSales.map((item)=>{
+                            return(
+                                <Td>{item.quantity}</Td>
+                            );
+                        })
+                    }
+                           
+                </Tr>
+                <Tr>
+                <Header>Ajustements</Header>
+                    {
+                         this.props.actualSales.map((item)=>{
+                            return(
+                                <Td>{item.quantity}</Td>
+                            );
+                        })
+                    }
+                           
+                </Tr>
+    
+            </TableStyled>
+            
+    
+            </Container>
+          
+        )
+    }
+
+  
 }
 
 export default Table

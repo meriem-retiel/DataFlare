@@ -5,11 +5,21 @@ import styled from "styled-components";
 const ydata= {
     labels: ["January", "February", "March", "April", "May", "June", "July"],
     datasets: [{
-    label: "My First dataset",
+    label: "Ventes actuels",
     backgroundColor: 'rgb(255, 99, 132)',
     borderColor: 'rgb(255, 99, 132)',
-    data: [0, 10, 5, 2, 20, 30, 45],
-    }]
+    data: [0, 100, 500, 250, 210, 300, 450],
+    },
+    {
+      label: "Previsions",
+      backgroundColor: '#0A84FF',
+      borderColor: '#0A84FF',
+      data: [0,200 , 234, 200, 300, 450, 350],
+      }
+      
+
+  
+  ]
 }
 const Container = styled.div`
 
@@ -21,7 +31,7 @@ export const BarChart = ({data}) => {
     <Container>
       <Line
         data={data}
-        height={400}
+        height={300}
         width={600}
         options={{
           maintainAspectRatio : false, 

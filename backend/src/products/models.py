@@ -10,7 +10,8 @@ class Product(models.Model):
         return self.dci
 
 class Date(models.Model):
-    date = models.DateField(primary_key=True)
+    id_date = models.BigAutoField(primary_key=True)
+    date = models.DateField(default=None)
     def __str__(self):
         return ' %s' % (self.date)
     #date = models.DateField(default=None,input_formats=settings.DATE_INPUT_FORMATS)
