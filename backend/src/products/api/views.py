@@ -13,13 +13,16 @@ class ProductListView(ListAPIView):
     serializer_class= ProductSerializer
 
 class ProductDetailView(RetrieveAPIView):
-    queryset= Product.objects.all()
+    queryset= ActualSales.objects.all()
     serializer_class= ProductSerializer
+
 
 #sales actual of a Product with id pk
 @api_view(['GET'])
 def ProductActualSales(request,pk):
-        sales = ActualSales.objects.filter(product=pk)
+        sales = ActualSales.objects.filter(
+        product=pk#,date__date__range=[datetime.date(yearD, monthD, 1),datetime.date(yearF, monthF, 1)]
+        )
         serializer = SalesActualSerializer(sales,many=True)
         return Response(serializer.data)
 #for now case try save one element outta many

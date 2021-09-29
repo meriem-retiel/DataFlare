@@ -1,5 +1,8 @@
 import { AiOutlineFile } from 'react-icons/ai'
-import styled from 'styled-components'
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import axios from 'axios'
+
 
 const StyledFile=styled.div `
     padding-left: 20px;
@@ -15,11 +18,14 @@ const StyledFile=styled.div `
     }
 `;
 
-const File =({name})=>(
-        <StyledFile>
+const File =(props)=>(
+        <Link to={`/${props.id}`}>
+         <StyledFile>
             <AiOutlineFile/>
-            <span style={{ textTransform:'lowercase'}}>{name}</span>
+            <span style={{ textTransform:'lowercase'}}>{props.name}</span>
         </StyledFile>
+        </Link>
+       
     )
 
 export { File };

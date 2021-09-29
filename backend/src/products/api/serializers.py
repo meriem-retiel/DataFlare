@@ -8,8 +8,7 @@ class ProductSerializer(serializers.ModelSerializer):
     #adjusted = serializers.StringRelatedField(many=True)
     class Meta:
         model= Product
-        fields = ('dci','dosage','forme','designation','actual','forecast')
-from ..models import Product, ActualSales, Date 
+        fields = ('id_prod','dci','dosage','forme','designation')
 
 
 class DateSerializer(serializers.ModelSerializer):

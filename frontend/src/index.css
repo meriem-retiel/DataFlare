@@ -11,3 +11,16 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+svg.MuiSvgIcon-root{
+  color: inherit;
+}
+.MuiIconButton-root{
+  color: inherit;
+}
+button.MuiButtonBase-root.MuiIconButton-root {
+  color: inherit;
+}
+
+button.ant-btn.ant-btn-link.ant-btn-circle.ant-btn-icon-only {
+  color: inherit;
+}

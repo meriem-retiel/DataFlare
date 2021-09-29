@@ -3,6 +3,9 @@ import Dashboard from "./containers/Dashboard";
 import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./styles/global";
 import { lightTheme, darkTheme } from "./styles/theme";
+import { BarChart } from "./components/Chart/Chart";
+import BaseRouter from "./routes";
+import { BrowserRouter as Router } from "react-router-dom";
 
 
 const structure= [
@@ -49,7 +52,7 @@ export default function App() {
   return(
     <ThemeProvider theme={darkTheme}>
       <GlobalStyles/>
-      <Dashboard/>
+    <Dashboard/>
     </ThemeProvider>
 
   );

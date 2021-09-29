@@ -3,6 +3,7 @@ import uuid
 
 # Create your models here.
 class Product(models.Model):
+    id_prod = models.BigAutoField(primary_key=True)
     dci= models.CharField(max_length=100)
     dosage= models.CharField(max_length=100)
     forme= models.CharField(max_length=100)
@@ -15,14 +16,15 @@ class Date(models.Model):
     date = models.DateField(unique=True, default=None)
     def __str__(self):
         return ' %s %s' % (self.id_date, self.date)
-    #date = models.DateField(default=None,input_formats=settings.DATE_INPUT_FORMATS)
+
 #instance of date : datetime.date(1997, 10, 19) 
 class ActualSales(models.Model):
     id_actual = models.BigAutoField(primary_key=True)
     quantity = models.IntegerField(default=0)
     product = models.ForeignKey(Product,related_name='actual', on_delete=models.CASCADE)
     date = models.ForeignKey(Date,related_name='actualsale', on_delete=models.CASCADE)
-
+    class Meta:
+        unique_together = ('product','date')
     def __str__(self):
         return ' %s %s %s' % ( self.product ,self.quantity, self.date.date)
         
@@ -39,13 +41,14 @@ class ForecastedSales(models.Model):
     def __str__(self):
         return ' %s %s %s %s %s' % ( self.product, self.quantity, self.date.date, self.model_name, self.horizon)
 
-
-
 class AdjustedSales(models.Model):
     id_adjust = models.BigAutoField(primary_key=True)
     quantity = models.IntegerField(default=0)
     product = models.ForeignKey(Product,related_name='adjusted', on_delete=models.CASCADE)
     date = models.ForeignKey(Date, on_delete=models.CASCADE)
+    
+    class Meta:
+        unique_together = ( 'product', 'date')
     def __str__(self):
         return ' %s %s' % (self.product , self.quantity,self.date.date)
 

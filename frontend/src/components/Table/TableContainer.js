@@ -1,11 +1,7 @@
-import { RecentActors } from '@material-ui/icons'
+import React from 'react'
+import Table from './Table'
+import Datepicker from './DatePicker'
 import axios from 'axios'
-import {React,  useState,useEffect } from 'react'
-import styled from 'styled-components'
-import { BarChart } from '../components/Chart/Chart'
-import TableConrainer from '../components/Table/TableContainer'
-
-
 
 const structure= [
     {
@@ -157,91 +153,53 @@ const structure= [
 ]
 
 
-
-
-const chartData = {
-    labels: structure.map((item) => item.date),
-    datasets: [{
-    label: "Ventes actuels",
-    backgroundColor: 'rgb(255, 99, 132)',
-    borderColor: 'rgb(255, 99, 132)',
-    data: structure.map((item) => item.ActualSale),
-    fill: false, 
-    },
-    {
-        label: "Prévision",
-        backgroundColor: 'rgb(255, 99, 132)',
-        borderColor: 'rgb(255, 30, 132)',
-        data: structure.map((item) => item.ForcastedSale),
-        fill: false,}
-
-        
-
-  
-],
-}
-
-const Container = styled.div`
-position: fixed;
-top:0;
-bottom:0;
-left: 0;
-overflow: hide;
-right: 0;
-padding-top:8rem;
-padding-left: 16rem;
-
-color: ${({theme})=> theme.textColor };
-
-`
-
-function ProductPage(props){
-const  [actualSales,setActualSales]=useState([])
-const  [forecastedSales,setForecastedSales]=useState([])
-const  [adjustedSales,setAdjustedSales]=useState([])
-
-const getActualSales=()=>{
-    axios.get(`http://127.0.0.1:8000/api/salesActual/${props.match.params.productID}/`)
-        .then(res=>{
-          setActualSales(res.data);
-          console.log(res.data)
-        })
-
-
-}
-
-
-useEffect(() => {
-    getActualSales()
-
-},props.match.params.productID)
-
-const chartData = {
-    labels: actualSales.map((item) => item.date),
-    datasets: [{
-    label: "Ventes actuels",
-    backgroundColor: 'rgb(255, 99, 132)',
-    borderColor: 'rgb(255, 99, 132)',
-    data: actualSales.map((item) => item.quantity),
-    fill: false, 
-    },
-
-
-        
-
-  
-],
-}
-
+const dateDiff = ([y,m],delta)=>{
+    if (delta>0){
+        m=m+delta
+        var x=Math.floor(m/12)
+        var mod= m%12
+        return [y+x,mod]
     
-        return (
-            <Container>
-               <TableConrainer actualSales={actualSales}/>
-               <BarChart data ={chartData}/>
-            </Container>
-        )
+    }else{
+        m=m+delta
+        if (m<0){
+            y=y-1
+            var x=Math.floor(-m/12)
+            var mod= -m%12
+            return [y-x,12-mod]
+        }else{
+            return[y,m]
+        }
+    }
+   
+}
 
+class TableContainer extends React.Component {
+    state={
+        dateDebut:[2020,9],
+        dateFin:[2021,5],
+    }
+    handledecrementDate=()=>{
+        this.setState({
+            dateDebut:dateDiff([this.state.dateDebut[0],this.state.dateDebut[1]],-18),
+            dateFin:dateDiff([this.state.dateFin[0],this.state.dateFin[1]],-18)
+        })
+    }
+    handleincrementDate=()=>{
+        this.setState({
+            dateDebut:dateDiff([this.state.dateDebut[0],this.state.dateDebut[1]],18),
+            dateFin:dateDiff([this.state.dateFin[0],this.state.dateFin[1]],18)
+        })
     }
 
+    render(){
+        return(
+            <>
+            <Datepicker handledecrementDate={this.handledecrementDate} handleincrementDate={this.handleincrementDate} dateDebut={this.state.dateDebut} dateFin={this.state.dateFin}/>
+            <Table actualSales={this.props.actualSales} dateDebut={this.state.dateDebut} dateFin={this.state.dateFin}  />
+            </>
+        )
+    }
+}
 
-export default ProductPage
+export default TableContainer
