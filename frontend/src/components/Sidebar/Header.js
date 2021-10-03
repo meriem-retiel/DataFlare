@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import ButtonUplaod from './Upload2'
 
 const HeaderText = styled.h3`
 color:${({theme})=>theme.header};
@@ -11,9 +12,13 @@ background:${({theme})=>theme.secondary} ;
 
 const Header = ({title}) => {
     return (
-        <HeaderText>
+        <>
+        <HeaderText style={{display:'inline', marginLeft:'4px'}}>
             {title}
         </HeaderText>
+        <ButtonUplaod/>
+        </>
+
     )
 }
 

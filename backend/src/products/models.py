@@ -2,10 +2,11 @@ from django.db import models
 
 # Create your models here.
 class Product(models.Model):
-    dci= models.CharField(max_length=100)
-    dosage= models.CharField(max_length=100)
-    forme= models.CharField(max_length=100)
-    designation = models.CharField(max_length=100)
+    id= models.CharField(max_length=400, primary_key=True, serialize=False, verbose_name='ID')
+    dci= models.CharField(max_length=800)
+    dosage= models.CharField(max_length=400)
+    forme= models.CharField(max_length=400)
+    designation = models.CharField(max_length=400)
     def __str__(self):
         return self.dci
 
