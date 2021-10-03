@@ -3,12 +3,13 @@ from rest_framework import serializers
 from ..models import AdjustedSales, ForecastedSales, Product, ActualSales, Date 
 import logging
 class ProductSerializer(serializers.ModelSerializer):
-    actual = serializers.StringRelatedField(many=True)#bring all sales of product
-    forecast = serializers.StringRelatedField(many=True)
-    adjusted = serializers.StringRelatedField(many=True)
+    #try add required false ( didnt test if other endpoints still valid)
+    actual = serializers.StringRelatedField(many=True,required=False)#bring all sales of product
+    forecast = serializers.StringRelatedField(many=True,required=False)
+    adjusted = serializers.StringRelatedField(many=True,required=False)
     class Meta:
         model= Product
-        fields = ('dci','dosage','forme','designation')
+        fields = ('id_prod','dci','dosage','forme','designation','actual','forecast','adjusted')
 
 class SalesActualSerializer(serializers.ModelSerializer):
     date = serializers.DateField(source="date.date", read_only=True)

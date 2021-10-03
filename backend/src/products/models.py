@@ -4,10 +4,10 @@ import uuid
 # Create your models here.
 class Product(models.Model):
     id_prod = models.BigAutoField(primary_key=True)
-    dci= models.CharField(max_length=100)
-    dosage= models.CharField(max_length=100)
-    forme= models.CharField(max_length=100)
-    designation = models.CharField(max_length=100)
+    dci= models.CharField(max_length=800)
+    dosage= models.CharField(max_length=300)
+    forme= models.CharField(max_length=300)
+    designation = models.CharField(max_length=300)
     def __str__(self):
         return self.dci
 

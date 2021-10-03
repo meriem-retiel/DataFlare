@@ -1,6 +1,4 @@
 import logging
-
-
 from django.shortcuts import render
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from ..models import Date,AdjustedSales, ForecastedSales, Product, ActualSales
@@ -38,31 +36,26 @@ def CreateActualSales(request):
         #####use serializers to create json, models return strings
         ################back to first plan
         req_data = request.data 
-        date1 = Date(date =datetime.date(2017, 1, 1) )
-        serializer = SalesActualSerializer(data=request.data, many=True)
-        serializer.save()#want call create
-        
         print(req_data)
-        date= req_data[1]['date']
+        print(req_data)
+        #date1 = Date(date =datetime.date(2017, 1, 1) )
+        #serializer = SalesActualSerializer(data=request.data, many=True)
+        #serializer.save()#want call create
+        #date= req_data[1]['date']
         #create & save date instance for test
-        date1 = Date(date =datetime.date(2017, 1, 1) )
+        #date1 = Date(date =datetime.date(2017, 1, 1) )
         #read quantity 
-        date1.save()
-        quantity1= req_data[1]['quantity']
+        #date1.save()
+        #quantity1= req_data[1]['quantity']
         #call product object with id prod1
-        prod1= req_data[1]['product']
-        product1 = Product.objects.get(id=prod1)
+        #prod1= req_data[1]['product']
+        #product1 = Product.objects.get(id=prod1)
         #needs all 3 as entry
-        print(product1) 
-        sale1 = ActualSales.objects.create(quantity= quantity1, product= product1 , date= date1)
-        #sale1.save()
-        #print(ActualSales.objects.all())
-        print('actualsales modele return sale1')
-        print(sale1)
+       # print(product1) 
+       # sale1 = ActualSales.objects.create(quantity= quantity1, product= product1 , date= date1)
         #dict_sale = dict()
-        import json
         #json.dumps(dict_sale)
-        serializer = SalesActualSerializer(data=sale1, many=True)
+       # serializer = SalesActualSerializer(data=sale1, many=True)
         #print(serializer)
         #print(ActualSales.objects.get(date= '2017-01-01'))
         #date_object= Date.objects.get(date=date1)
@@ -82,12 +75,9 @@ def CreateActualSales(request):
               #print("date serializer creation")      
               #date_serializer.save()
               #serializer.save()
-            
           #  print("outta if")
-
-
-           # return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(req_data, status=status.HTTP_201_CREATED)
+        #return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 #sales adjusted of a Product with id pk
@@ -104,18 +94,31 @@ def ProductAdjustedSales(request,pk):
 
 @api_view(['POST'])
 def upload_product(request):
-     
+        print("inside upload product")
         productsData = JSONParser().parse(request)
         proddata=list()
-        z={'product':{'id':'999','dci':'HYDROCHLOROTHIAZIDE IRBESARTAN','dosage':'CP.PEL300MG/ 12.5 MG 30','forme':'CP.PEL','designation':'CO-IRBEVEL CP.PEL300MG/ 12.5 MG 30'},'date':{'date':'2021-01-15'},'quantity':'3333'}
-        serializer= SalesActualSerializer(data=z)
-        if serializer.is_valid():
-                serializer.save()
-        else:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        print(productsData)
+        #z={'product':{'id':'999','dci':'HYDROCHLOROTHIAZIDE IRBESARTAN','dosage':'CP.PEL300MG/ 12.5 MG 30','forme':'CP.PEL','designation':'CO-IRBEVEL CP.PEL300MG/ 12.5 MG 30'},'date':{'date':'2021-01-15'},'quantity':'3333'}
+        #serializer= SalesActualSerializer(data=z)
+        #if serializer.is_valid():
+               # serializer.save()
+       # else:
+               # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         for row in productsData:
-
-                prod={'id':row['id'],'dci':row['dci'],'dosage':row['dosage'],'forme':row['forme'],'designation':row['designation']}
+                #logging.error(row)
+                prod={'dci':row['dci'],'dosage':row['dosage'],'forme':row['forme'],'designation':row['designation']}
                 proddata.append(prod)
+                serializer= ProductSerializer(data=prod)
+                print(serializer.is_valid())
+                if serializer.is_valid():
+                         serializer.save()
+                         print("-------------")
+                         print('serilizer was saved')
+                else:
+                        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response("products uploaded, go check bdd")
+
+
         
