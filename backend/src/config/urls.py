@@ -20,6 +20,6 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
-    path('api/',include('products.api.urls'))
-
+    path('api/',include('products.api.urls')),
+    path('MLapi/',include('products.MLapi.urls'))
 ]

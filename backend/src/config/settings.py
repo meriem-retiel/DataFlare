@@ -102,6 +102,14 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+    #'postgresql': {
+    #    'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    #    'NAME': 'myproject',
+    #    'USER': 'myprojectuser',
+    #    'PASSWORD': 'password',
+    #    'HOST': 'localhost',
+    #    'PORT': '',
+   # }
 }
 
 

@@ -1,12 +1,17 @@
 from django.urls import path, include
-from .views import ProductDetailView,ProductListView,ProductActualSales,ProductAdjustedSales,ProductForecastedSales,ProductTable, upload_product
+from .views import ProductDetailView,CreateActualSales,ProductListView,ProductActualSales,ProductAdjustedSales
 
 urlpatterns = [
+    #validated
     path('',ProductListView.as_view()),
+    #not yet
     path('<pk>',ProductDetailView.as_view()),
+    #validated
     path('salesActual/<str:pk>/',ProductActualSales),
-    path('salesForecasted/<str:pk>/',ProductForecastedSales),
+    #validated
     path('salesAdjusted/<str:pk>/',ProductAdjustedSales),
-    path('upload/',upload_product),
+    #not yet
+    path('importsalesActual/',CreateActualSales),
+
     #path('productTable/<str:pk>/',ProductTable),
 ]
