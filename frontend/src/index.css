@@ -24,3 +24,37 @@ button.MuiButtonBase-root.MuiIconButton-root {
 button.ant-btn.ant-btn-link.ant-btn-circle.ant-btn-icon-only {
   color: inherit;
 }
+
+.ant-upload.ant-upload-select {
+
+  float: right;
+}
+button.ant-btn.ant-btn-primary.ant-btn-circle.ant-btn-icon-only{
+  background: #36A153;
+  border-color: #36A153;
+
+}
+button.ant-btn.ant-btn-primary.ant-btn-circle.ant-btn-icon-only:hover{
+  background:#0E6D28;
+  border-color: #0E6D28;
+
+}
+div.ant-modal-content{
+  background-color: #242526;
+  color: #ADB0B5;
+}
+div.ant-modal-header{
+  background-color: #242526;
+  color: #ADB0B5;
+  border-bottom-color: #383838;
+}
+div#rcDialogTitle1{
+  color: inherit;
+}
+
+span.ant-modal-close-x{
+  color: #868686;
+}
+.ant-modal-footer{
+  border-top: none;
+}

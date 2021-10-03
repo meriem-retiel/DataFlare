@@ -52,8 +52,8 @@ class AdjustedSales(models.Model):
     def __str__(self):
         return ' %s %s %s' % (self.product , self.quantity,self.date.date)
 
-class MLmodel(models.Model):
+#class MLmodel(models.Model):
     # file will be uploaded to MEDIA_ROOT / Trained/
     #must update MEDIA_ROOT in setting
     # Indiquez dans MEDIA_URL l’URL publique de base correspondant à ce répertoire.
-    pickled_modele = models.FileField(blank=True, upload_to='Trained/')
+    #pickled_modele = models.FileField(blank=True, upload_to='Trained/')

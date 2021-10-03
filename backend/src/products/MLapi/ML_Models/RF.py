@@ -101,14 +101,17 @@ def RF_Training(ProdID, horizon, hyperparam_array=None):
     list_sales = [x.get('quantity') for x in sales]
     # reverse list => [t-1,t-2,t-3,t-4....]
     sales = [x for x in reversed(list_sales)]
+    print(sales)
+
     #launch training
     model = "trained model depending on horizon"
     data_supervised = series_to_supervised(sales,window)
+    print(data_supervised)
+
     if horizon == '1':
          rmse_metric, mape_metric, mae_metric, y, yhat, RF_model = RF_unistep_walk_forward_validation(data_supervised, test_size,param)
          return RF_model,mape_metric
     elif horizon == '6':
-         print()
          rmse_metric, mape_metric, mae_metric, test, RF_model = RF_mediumterm_walk_forward_validation(data_supervised, test_size,param)
          return RF_model,mape_metric
     elif horizon == '12':

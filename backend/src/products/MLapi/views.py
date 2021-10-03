@@ -88,24 +88,30 @@ def Model_Training(request, pk,model,h):
     latest_date = previous_4_ordered_sales.values('date__date')[0].get('date__date')
     
     date_instance, created = Date.objects.get_or_create(date =latest_date)
+    print(date_instance)
+    print(date_instance)
+
     #3-choose model to train
     if model == 'RF': 
         #Training the model
         RF_trained_model, mape = RF_Training(pk,h)#instead of pickling
         #Predict using the model & are saved in BDD
-        predictions = RF_predictions(product_instance,date_instance,RF_trained_model,h)
+        serialized = RF_predictions(product_instance,date_instance,RF_trained_model,h)
         #serialize them to send back
         #serializer of "mape" & "object of predictions"
-        return Response(predictions)
+        return Response(serialized.data)
     elif  model == 'MLP':
         MLP_trained_model, mape = MLP_Training(pk,h)#instead of pickling
         #fetch from bdd
-        predictions = MLP_predictions(product_instance,date_instance,MLP_trained_model,h)
-        return Response(predictions)
+        serialized = MLP_predictions(product_instance,date_instance,MLP_trained_model,h)
+        return Response(serialized.data)
     elif  model == 'LSTM':
+        print("lstm launched trainng")
+
         model_trained,scaler, mape = LSTM_Training(pk,h)#instead of pickling
-        predictions = LSTM_predictions(product_instance,date_instance,model_trained,scaler,h)
-        return Response(predictions)
+        serialized = LSTM_predictions(product_instance,date_instance,model_trained,scaler,h)
+        print("lstm didnt finish taining yet")
+        return Response(serialized.data)
     elif model == 'Best_model':
         #call 3 functions and compare their errors
         return 
