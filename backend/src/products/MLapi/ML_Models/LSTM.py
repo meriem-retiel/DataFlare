@@ -12,6 +12,7 @@ import numpy as np
 from numpy import concatenate
 import statistics
 
+from ...api.serializers import SalesForecastedSerializer
 from ...models import ActualSales,ForecastedSales,Date, ActualSales
 from .Data_Preprocessing import add_months, series_to_supervised, mape, series_to_supervised,ANN_train_test_split, difference,inverse_difference,scale,invert_scale, evaluate_multistep
 
@@ -81,12 +82,18 @@ def LSTM_predictions(product_instance,date_instance,model_trained,scaler,horizon
         pred = invert_scale(scaler, X, pred) 
         ## invert differenced using previous real value
         unistep_prediction = pred + list_result[0] 
-        forecast_instance= ForecastedSales.objects.get_or_create(quantity = unistep_prediction, product= product_instance, date = date_instance, model_name = "LSTM",horizon=horizon)
+        #save instance
+        previous_date = date_instance.date 
+        new_date = add_months(previous_date,1)
+        date_instance, create = Date.objects.get_or_create(date =new_date)
+        forecast_instance , created = ForecastedSales.objects.get_or_create(quantity = unistep_prediction, product= product_instance, date = date_instance, model_name = 'LSTM',horizon=horizon)
+        serializer = SalesForecastedSerializer(forecast_instance)
 
-        return  unistep_prediction
+        return  serializer
     elif horizon == '6':
         """Medium term prediction"""
         h_predictions = []
+        instances = []
         for k in range(6):
             pred_scaled = LSTM.predict(X_3D, batch_size=1)
             #inverse scale
@@ -103,13 +110,16 @@ def LSTM_predictions(product_instance,date_instance,model_trained,scaler,horizon
             #save instance
             previous_date = date_instance.date 
             new_date = add_months(previous_date,1)
-            date_instance = Date.objects.create(date =new_date)
-            forecast_instance= ForecastedSales.objects.get_or_create(quantity = prediction, product= product_instance, date = date_instance, model_name = "LSTM",horizon=horizon)
+            date_instance, create = Date.objects.get_or_create(date =new_date)
+            forecast_instance , created = ForecastedSales.objects.get_or_create(quantity = prediction, product= product_instance, date = date_instance, model_name = 'LSTM',horizon=horizon)
+            instances = np.append(instances,forecast_instance )
+        serializer = SalesForecastedSerializer(instances,many=True)
 
-        return h_predictions 
+        return serializer 
         """long term prediction"""
     elif horizon == '12':
         h_predictions = []
+        instances = []
         for k in range(12):
             pred_scaled = LSTM.predict(X_3D, batch_size=1)
             #inverse scale
@@ -127,10 +137,12 @@ def LSTM_predictions(product_instance,date_instance,model_trained,scaler,horizon
             #save instance
             previous_date = date_instance.date 
             new_date = add_months(previous_date,1)
-            date_instance = Date.objects.create(date =new_date)
-            forecast_instance= ForecastedSales.objects.get_or_create(quantity = prediction, product= product_instance, date = date_instance, model_name = "LSTM",horizon=horizon)
+            date_instance, create = Date.objects.get_or_create(date =new_date)
+            forecast_instance , created = ForecastedSales.objects.get_or_create(quantity = prediction, product= product_instance, date = date_instance, model_name = 'LSTM',horizon=horizon)
+            instances = np.append(instances,forecast_instance )
+        serializer = SalesForecastedSerializer(instances,many=True)
 
-        return h_predictions 
+        return serializer 
          
     else:
         return "No such model"    

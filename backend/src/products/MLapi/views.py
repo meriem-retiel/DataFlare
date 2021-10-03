@@ -9,53 +9,23 @@ import joblib
 from pandas import Series
 import numpy as np
 
+from .ML_Models.Data_Preprocessing import add_months
 from .ML_Models.RF import RF_Training, RF_predictions
 from .ML_Models.MLP import MLP_Training, MLP_predictions
 from .ML_Models.LSTM import LSTM_Training, LSTM_predictions
 
+#validated
 @api_view(['GET'])
 def Prediction_Visualization(request,pk,model,h):
-    if model == 'RF':
-        if h == '1':
-            sales = ForecastedSales.objects.filter(product=pk,model_name=model)
+    if model in ('RF', 'MLP','LSTM'):
+        if h in ('1', '6', '12'):
+            sales = ForecastedSales.objects.filter(product=pk,model_name=model, horizon = h)
             serializer = SalesForecastedSerializer(sales,many=True)
-            return Response(serializer.data)
-            
-        elif h =='6':
-            return Response(0)
-        elif h =='12':
-            return
+            print(sales)
+            print("here slaes was serilized normally")
+            return Response(serializer.data)  
         else:
             return Response("No such horizon")
-         
-    elif  model == 'MLP':
-        #fetch from bdd
-        if h == '1':
-            sales = ForecastedSales.objects.filter(product=pk,model_name=model)
-            serializer = SalesForecastedSerializer(sales,many=True)
-            return Response(serializer.data)
-            
-        elif h == '6':
-            return
-        elif h == '12':
-            return
-        else:
-            return Response("No such horizon")
-        return 
-    elif  model == 'LSTM':
-        #fetch from bdd
-        if h == '1':
-            sales = ForecastedSales.objects.filter(product=pk,model_name=model)
-            serializer = SalesForecastedSerializer(sales,many=True)
-            return Response(serializer.data)
-            
-        elif h == '6':
-            return
-        elif h == '12':
-            return
-        else:
-            return Response("No such horizon")
-        return
     else:
         return Response("No such model")
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -67,38 +37,43 @@ def Prediction_Visualization(request,pk,model,h):
 @api_view(['GET'])
 def Forecasting(request,pk,model,h):
     #1--get product instance
-    product_instance = Product.objects.get(id=pk)
+    product_instance = Product.objects.get(id_prod=pk)
     #-2 create new date instance T+1 from latest T, for the 3 models forecasting
     previous_4_ordered_sales= ActualSales.objects.all().order_by('-date__date')[:4].values('quantity','date__date')      
     latest_date = previous_4_ordered_sales.values('date__date')[0].get('date__date')
-    date_instance = Date.objects.create(date =latest_date)
+    date_instance , created = Date.objects.get_or_create(date =latest_date)
     #3-call latest trained model
 
     #4- predict
     if model == "RF": #validated
-        #call latest trained_model from bdd
+        #call latest trained_model from bdd or files***********************
         path = r"C:\Users\Yacine\PFE_dev_project\DataFlare\backend\src\products\MLapi\TrainedModels\RF_model.pkl" 
         trained_model=joblib.load(path)
-        serilized_predictions = RF_predictions(product_instance,date_instance,trained_model,h)
-        return Response(serilized_predictions)
+        serializer = RF_predictions(product_instance,date_instance,trained_model,h)
+        return Response(serializer.data)
     elif model == "MLP": #validated
+        #call latest trained_model from bdd***********************
         path = r"C:\Users\Yacine\PFE_dev_project\DataFlare\backend\src\products\MLapi\TrainedModels\MLP_model.h5" 
         trained_model = load_model(path)
-        serilized_predictions = MLP_predictions(product_instance,date_instance,trained_model,h)
-        return Response(serilized_predictions)
+        serializer = MLP_predictions(product_instance,date_instance,trained_model,h)
+        ######################################""
+        print("before response serilized")
+        print(serializer)
+        return Response(serializer.data)
     elif model == "LSTM":
-           #loading model & scaler!!path to change
+        #call latest trained_model from bdd***********************
+        #loading model & scaler!!path to change
         path = r"C:\Users\Yacine\PFE_dev_project\DataFlare\backend\src\products\MLapi\TrainedModels\LSTM_model.h5" 
         scaler_path = r"C:\Users\Yacine\PFE_dev_project\DataFlare\backend\src\products\MLapi\TrainedModels\lstm_scaler.pkl" 
         
         scaler = joblib.load(scaler_path)
         trained_model = load_model(path)
-        serilized_predictions = LSTM_predictions(product_instance,date_instance,trained_model,scaler,h)
-        return Response(serilized_predictions)
+        serializer = LSTM_predictions(product_instance,date_instance,trained_model,scaler,h)
+        return Response(serializer.data)
     elif model == "auto":
         return
     else:
-        return
+        return "No such model"
 
 #Training using all sales and forecasting new values
 #(better when have new sales)
@@ -107,21 +82,18 @@ def Forecasting(request,pk,model,h):
 def Model_Training(request, pk,model,h):
 #date option should be next month from laest actual month
     #1--get product instance
-    product_instance = Product.objects.get(id=pk)
+    product_instance = Product.objects.get(id_prod=pk)
     #-2 create new date instance T+1 from latest T, for the 3 models forecasting
     previous_4_ordered_sales= ActualSales.objects.all().order_by('-date__date')[:4].values('quantity','date__date')      
     latest_date = previous_4_ordered_sales.values('date__date')[0].get('date__date')
-    #date = date =datetime.date(2017, 1, 1) 
-    #new_date = add_months(date,1)
-    date_instance = Date.objects.create(date =latest_date)
+    
+    date_instance, created = Date.objects.get_or_create(date =latest_date)
     #3-choose model to train
     if model == 'RF': 
         #Training the model
         RF_trained_model, mape = RF_Training(pk,h)#instead of pickling
-        #Predict using the model
+        #Predict using the model & are saved in BDD
         predictions = RF_predictions(product_instance,date_instance,RF_trained_model,h)
-        #save them in forecastsales table
-
         #serialize them to send back
         #serializer of "mape" & "object of predictions"
         return Response(predictions)

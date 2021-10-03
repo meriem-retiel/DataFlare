@@ -7,10 +7,9 @@ from numpy import asarray
 import numpy as np
 from math import sqrt
 from sklearn.metrics import mean_squared_error
-
+from ...api.serializers import SalesForecastedSerializer
 from ...models import ActualSales,ForecastedSales,Date, ActualSales
 from .Data_Preprocessing import add_months, mean_absolute_error,mape, series_to_supervised, train_test_split,evaluate_multistep
-
 ################"Mai-function"################
 
 #create and save RF predictions
@@ -29,14 +28,22 @@ def RF_predictions(product_instance,date_instance,trained_model,horizon):
     #predict Quantity test[[ 6405. , 6303., 10953 , 6600]]=>14846 
     if horizon == '1' :
         unistep = RF.predict(sales_2D)
-        #forecast_instance= ForecastedSales.objects.get_or_create(quantity = unistep[0], product= product_instance, date = date_instance, model_name = model,horizon=horizon)
-        #forecast_unistep.save()
-        return unistep
+        previous_date = date_instance.date 
+        new_date = add_months(previous_date,1)
+        date_instance, create = Date.objects.get_or_create(date =new_date)
+        forecast_instance , created = ForecastedSales.objects.get_or_create(quantity = unistep[0], product= product_instance, date = date_instance, model_name = 'RF',horizon=horizon)
+        #Serilize forecaste
+        #a = ForecastedSales.objects.filter(id_forcast = forecast_instance['id'])
+        serializer = SalesForecastedSerializer(forecast_instance)
+        #unistep_serialized = SalesForecastedSerializer(forecast_instance[0],many=True)
+        #print("after serilaizing")
+        return serializer 
     ###################"save prediction start##################
     #product_serializer = ProductSerializer(product_instance)
     elif horizon == '6':
         """Medium term prediction"""
         h_predictions = []
+        instances = []
         for k in range(6):
             yhat = RF.predict(sales_2D)
             h_predictions = np.append(h_predictions,int(yhat))
@@ -46,13 +53,18 @@ def RF_predictions(product_instance,date_instance,trained_model,horizon):
             #save instance
             previous_date = date_instance.date 
             new_date = add_months(previous_date,1)
-            date_instance = Date.objects.create(date =new_date)
+            date_instance, create = Date.objects.get_or_create(date =new_date)
+            forecast_instance, create= ForecastedSales.objects.get_or_create(quantity = int(yhat), product= product_instance, date = date_instance, model_name = 'RF',horizon=horizon)
+            instances = np.append(instances,forecast_instance )
+      
+        serializer = SalesForecastedSerializer(instances,many=True)
             #forecast_instance= ForecastedSales.objects.get_or_create(quantity = yhat, product= product_instance, date = date_instance, model_name = model,horizon=horizon)
 
-        return h_predictions 
+        return serializer 
         """long term prediction"""
     elif horizon == '12':
         h_predictions = []
+        instances = []
         for k in range(12):
             yhat = RF.predict(sales_2D)
             h_predictions = np.append(h_predictions,yhat)
@@ -60,12 +72,15 @@ def RF_predictions(product_instance,date_instance,trained_model,horizon):
             #reshape X 
             sales_2D = np.reshape(X, (1,4))
             #save instance
+
             previous_date = date_instance.date 
             new_date = add_months(previous_date,1)
-            date_instance = Date.objects.create(date =new_date)
-            forecast_instance= ForecastedSales.objects.get_or_create(quantity = yhat, product= product_instance, date = date_instance, model_name = "RF",horizon=horizon)
+            date_instance, create = Date.objects.get_or_create(date =new_date)
+            forecast_instance, create= ForecastedSales.objects.get_or_create(quantity = int(yhat), product= product_instance, date = date_instance, model_name = 'RF',horizon=horizon)
+            instances = np.append(instances,forecast_instance )
+        serializer = SalesForecastedSerializer(instances,many=True)
 
-        return h_predictions 
+        return serializer 
     else:
         return "No such model"
  #"array of all horizons [[t+1],[t-1,t-2,..,t-6],[t-1,....t+12]"

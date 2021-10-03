@@ -37,29 +37,23 @@ class ForecastedSales(models.Model):
     model_name =  models.CharField(max_length=50, default="auto")
     horizon = models.IntegerField(default=None)
     class Meta:
-        unique_together = ('date', 'horizon')
+        unique_together = ('model_name','date', 'horizon')
     def __str__(self):
-        return ' %s %s %s %s %s' % ( self.product, self.quantity, self.date.date, self.model_name, self.horizon)
+        return ' %s %s %s %s %s ' % ( self.product, self.quantity, self.date.date, self.model_name, self.horizon)
 
 class AdjustedSales(models.Model):
     id_adjust = models.BigAutoField(primary_key=True)
     quantity = models.IntegerField(default=0)
     product = models.ForeignKey(Product,related_name='adjusted', on_delete=models.CASCADE)
-    date = models.ForeignKey(Date, on_delete=models.CASCADE)
+    date = models.ForeignKey(Date,related_name='adjustedsale', on_delete=models.CASCADE)
     
     class Meta:
         unique_together = ( 'product', 'date')
     def __str__(self):
-        return ' %s %s' % (self.product , self.quantity,self.date.date)
+        return ' %s %s %s' % (self.product , self.quantity,self.date.date)
 
-   # def create(self, validated_data):
-        """
-        Create and return a new `Snippet` instance, given the validated data.
-        """
-       # return AdjustedSales.objects.create(**validated_data)
-
-    #def update(self, instance, validated_data):
-        """
-        Update and return an existing `adjusted sales` instance, given the validated data.
-        """
-        #instance.save()
+class MLmodel(models.Model):
+    # file will be uploaded to MEDIA_ROOT / Trained/
+    #must update MEDIA_ROOT in setting
+    # Indiquez dans MEDIA_URL l’URL publique de base correspondant à ce répertoire.
+    pickled_modele = models.FileField(blank=True, upload_to='Trained/')

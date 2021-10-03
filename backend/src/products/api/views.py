@@ -16,14 +16,15 @@ class ProductDetailView(RetrieveAPIView):
     queryset= ActualSales.objects.all()
     serializer_class= ProductSerializer
 
-
 #sales actual of a Product with id pk
 @api_view(['GET'])
 def ProductActualSales(request,pk):
         sales = ActualSales.objects.filter(
         product=pk#,date__date__range=[datetime.date(yearD, monthD, 1),datetime.date(yearF, monthF, 1)]
         )
+
         serializer = SalesActualSerializer(sales,many=True)
+ 
         return Response(serializer.data)
 #for now case try save one element outta many
 @api_view(['Post'])
@@ -91,8 +92,8 @@ def ProductAdjustedSales(request,pk):
         return Response(serializer.data)
 
 #Get all sales in one api call
-from collections import namedtuple
-ProductTable = namedtuple('ProductTable', ('Actuals', 'Forecasted'))
+#from collections import namedtuple
+#ProductTable = namedtuple('ProductTable', ('Actuals', 'Forecasted'))
 #################
 
 #when user adjust in table

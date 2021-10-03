@@ -1,4 +1,5 @@
 from math import sqrt
+from ...api.serializers import SalesForecastedSerializer
 
 from pandas.core.frame import DataFrame
 #from sklearn.model_selection import train_test_split
@@ -29,12 +30,20 @@ def MLP_predictions(product_instance,date_instance,model_trained,horizon):
     sales_3D = np.reshape(sales, (1, 1,4))#!recheck changed it to take only 4
     if horizon == '1' :
         unistep = MLP.predict(sales_3D,verbose=0)
-        return unistep
+        #save instance
+        previous_date = date_instance.date 
+        new_date = add_months(previous_date,1)
+        date_instance, create = Date.objects.get_or_create(date =new_date)
+        forecast_instance , created = ForecastedSales.objects.get_or_create(quantity = int(unistep[0]), product= product_instance, date = date_instance, model_name = 'MLP',horizon=horizon)
+        serializer = SalesForecastedSerializer(forecast_instance)
+
+        return serializer
     ###################"save prediction start##################
     #product_serializer = ProductSerializer(product_instance)
     elif horizon == '6':
         """Medium term prediction"""
         h_predictions = []
+        instances = []
         for k in range(6):
             yhat = MLP.predict(sales_3D,verbose=0)
             h_predictions = np.append(h_predictions,yhat)
@@ -44,11 +53,16 @@ def MLP_predictions(product_instance,date_instance,model_trained,horizon):
             #save instance
             previous_date = date_instance.date 
             new_date = add_months(previous_date,1)
-            date_instance = Date.objects.create(date =new_date)
-        return h_predictions 
+            date_instance, create = Date.objects.get_or_create(date =new_date)
+            forecast_instance , created = ForecastedSales.objects.get_or_create(quantity = int(yhat), product= product_instance, date = date_instance, model_name = 'MLP',horizon=horizon)
+            instances = np.append(instances,forecast_instance )
+        serializer = SalesForecastedSerializer(instances,many=True)
+
+        return serializer 
         """long term prediction"""
     elif horizon == '12':
         h_predictions = []
+        instances = []
         for k in range(12):
             yhat = MLP.predict(sales_3D,verbose=0)
             h_predictions = np.append(h_predictions,yhat)
@@ -58,10 +72,12 @@ def MLP_predictions(product_instance,date_instance,model_trained,horizon):
             #save instance
             previous_date = date_instance.date 
             new_date = add_months(previous_date,1)
-            date_instance = Date.objects.create(date =new_date)
-            forecast_instance= ForecastedSales.objects.get_or_create(quantity = yhat, product= product_instance, date = date_instance, model_name = "MLP",horizon=horizon)
+            date_instance, create = Date.objects.get_or_create(date =new_date)
+            forecast_instance , created = ForecastedSales.objects.get_or_create(quantity = int(yhat), product= product_instance, date = date_instance, model_name = 'MLP',horizon=horizon)
+            instances = np.append(instances,forecast_instance )
+        serializer = SalesForecastedSerializer(instances,many=True)
 
-        return h_predictions 
+        return serializer 
     else:
         return "No such model"
 
